@@ -26,6 +26,6 @@ void next_largest(int arr[],int arr_size,int target){
             st.push(arr[index]);
         index--;
     }
-    cout<<"Next largest element is : "<<st.top()<<endl;
+    (st.size()!=0)?cout<<"Next largest element is : "<<st.top()<<endl:cout<<"No next largest element is found"<<endl;
 
 }
