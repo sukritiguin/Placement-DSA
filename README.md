@@ -1,7 +1,7 @@
 # Placement-DSA
 
-## Linked List Data Structure :
-[Linked List DS Code using C/C++](https://github.com/sukritiguin/Placement-DSA/tree/Array-DS)
+## Array Data Structure :
+[Array DS Code using C/C++](https://github.com/sukritiguin/Placement-DSA/tree/Array-DS)
 
 ## Linked List Data Structure :
 [Linked List DS Code using C/C++](https://github.com/sukritiguin/Placement-DSA/tree/Linked-List)
