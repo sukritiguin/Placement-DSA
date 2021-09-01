@@ -1,96 +1,111 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-char* intopo(char* e,char* s,char* r);
-int preci(char c);
-int main()
-{
-	int c;
-	while(1)
-	{
-		char e[100];
-		char s[100],r[100]={NULL};
-		printf("1.Infix to postfix\n2.Exit\n");
-		printf("Enter your choice:");
-		scanf("%d",&c);
-		switch(c)
-		{
-			case 1: printf("Enter the infix expression:");
-			        getchar();
-			        gets(e);
-			        printf("The postfix expression is: %s\n",intopo(e,s,r));
-			        break;
-			case 2: exit(0);
-			default: printf("Wrong choice!\n");
-		}
-	}
-	return 0;
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#define exp_size 100
+
+struct stack_node{
+    char data;
+    struct stack_node* next;
+};
+
+struct stack_node* head=NULL;
+
+void push(char data);
+void pop();
+char top();
+int precedence_order(char operato);
+void infix_to_prefix(char exp[]);
+
+int main(){
+    char exp[exp_size];
+    printf("Enter the infix exp : ");
+    gets(exp);
+    infix_to_prefix(exp);
 }
 
-char* intopo(char* e,char* s,char* r)
-{
-    int i=0,p=0,top=-1;
-    while(e[i]!='\0')
-    {
-        if(e[i]=='(')
-        {
-            top++;
-            s[top]=e[i];
+void push(char data){
+    struct stack_node* new_stack_node = (struct stack_node*)malloc(sizeof(struct stack_node));
+    if(head==NULL){
+        new_stack_node->data = data;
+        new_stack_node->next = NULL;
+        head = new_stack_node;
+    }
+    else{
+        new_stack_node->data = data;
+        new_stack_node->next = head;
+        head = new_stack_node;
+    }
+}
+
+void pop(){
+    struct stack_node* temp = head;
+    head = head ->next;
+    free(temp);
+}
+
+char top(){
+    return head->data;
+}
+
+int precedence_order(char operato){
+    if(operato=='^')
+        return 3;
+    else if(operato=='*' || operato=='/' || operato=='%')
+        return 2;
+    else if(operato=='+' || operato=='-')
+        return 1;
+    else
+        return -1;
+}
+
+void infix_to_prefix(char exp[]){
+    char result[exp_size]={NULL};
+    int index = 0; //index is the index of result array
+    int i = 0;
+    while(exp[i]!='\0'){
+        // if any opening brackets is found then that will be stored in stack
+        if(exp[i]=='(' || exp[i]=='{' || exp[i]=='['){
+            push(exp[i]);
         }
-        else
-        {
-            if(e[i]==')')
-            {
-                while(s[top]!='(')
-                {
-                    r[p]=s[top];
-                    top--;
-                    p++;
+        else{
+            // if closing brackets are found
+            if(exp[i]==')' || exp[i]=='}' || exp[i]==']'){
+                while(top()!='('){
+                    result[index]=top(); //push the exp[i] in the result array
+                    pop();
+                    index++;
                 }
-                top--;
+                pop();
             }
-            else if(e[i]=='^' || e[i]=='*' || e[i]=='/' || e[i]=='%' || e[i]=='+' || e[i]=='-')
-            {
-                while(top>=0 && preci(s[top])>=preci(e[i]) && s[top]!='(' && s[top]!=')')
-                {
-                    r[p]=s[top];
-                    top--;
-                    p++;
+            //if any operator found
+            else if(exp[i]=='^' || exp[i]=='*' || exp[i]=='/' || exp[i]=='%' || exp[i]=='+' || exp[i]=='-'){
+                while(head!=NULL && precedence_order(top()) >= precedence_order(exp[i]) && top()!='(' && top()!=')' && top()!='{' && top()!='}' && top()!='[' && top()!=']'){
+                    result[index]=top();
+                    pop();
+                    index++;
                 }
-                top++;
-                s[top]=e[i];
+                push(exp[i]);
             }
-            else
-            {
-                r[p]=e[i];
-                p++;
+            else{
+                result[index]=exp[i];
+                index++;
             }
         }
         i++;
-        //printf("%c\t%s\t\t%s\n",e[i],s,r);
     }
-    while(top>=0)
+    while(head!=NULL)
 	{
-		if(s[top]=='(' || s[top]==')')
+		if(top()=='(' || top()==')')
 		{
-			top--;
+			pop();
 		}
 		else
 		{
-			r[p]=s[top];
-			p++;
-			top--;
+			result[index]=top();
+			index++;
+			pop();
 		}
 	}
-	p--;
-    return r;
-}
-
-int preci(char c)
-{
-    if(c=='^')
-        return 3;
-    else if(c=='*' || c=='/' || c=='%')
-            return 2;
-    else return 1;
+	index--;
+    printf("Postfix exp : %s\n",result);
 }
