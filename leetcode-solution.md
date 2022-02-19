@@ -1,0 +1,1 @@
+[Number with repeted digits](https://leetcode.com/problems/numbers-with-repeated-digits/discuss/258212/Share-my-O(logN)-C%2B%2B-DP-solution-with-proof-and-explanation)
